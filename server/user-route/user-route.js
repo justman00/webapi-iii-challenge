@@ -1,5 +1,6 @@
 const express = require("express");
 const db = require("../../data/helpers/userDb");
+const dbPost = require("../../data/helpers/postDb");
 
 const router = express.Router();
 
@@ -17,6 +18,18 @@ router.get("/", async (req, res) => {
     const data = await db.get();
     res.status(200).json(data);
   } catch (e) {
+    res.status(500).json({ message: "Oops, a problem occured" });
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  try {
+    const userDetails = await db.getById(req.params.id);
+    const allPosts = await db.getUserPosts(req.params.id);
+
+    res.status(200).json({ ...userDetails, posts: allPosts });
+  } catch (e) {
+    console.log(e);
     res.status(500).json({ message: "Oops, a problem occured" });
   }
 });
@@ -47,7 +60,6 @@ router.put("/:id", checkForName, async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   try {
-    console.log("hi");
     const result = await db.remove(req.params.id);
     res.status(200).json({ result });
   } catch (e) {
