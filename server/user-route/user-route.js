@@ -35,10 +35,21 @@ router.post("/", checkForName, async (req, res) => {
 router.put("/:id", checkForName, async (req, res) => {
   const { name } = req.body;
   const { id } = req.params;
-  console.log(name, id);
+
   try {
     const updatedUser = await db.update(id, { name });
     res.status(200).json({ updatedUser });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: "Oops, a problem occured" });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    console.log("hi");
+    const result = await db.remove(req.params.id);
+    res.status(200).json({ result });
   } catch (e) {
     console.log(e);
     res.status(500).json({ message: "Oops, a problem occured" });
